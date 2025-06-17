@@ -1,0 +1,23 @@
+{
+  "mongoDbUri": "mongodb://localhost27017",
+  "mongoDbName": "lively-chat",
+  "platforms": {
+    "qq": {
+      "protocol": "ws",
+      "host": "localhost",
+      "port": 3001,
+      "chats": [
+        {
+          "id": "1919810"
+        },
+        {
+          "id": "123456789",
+          "secret": "your_group_secret"
+        },
+        {
+          "id": "private:987654321"
+        }
+      ]
+    }
+  }
+}
