@@ -65,7 +65,7 @@ app.openapi(Overview, async (c) => {
 const server = serve(
   {
     fetch: app.fetch,
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}.`);
@@ -106,7 +106,13 @@ io.on('connection', (socket) => {
   });
 });
 
+let shutdownInitiated = false;
 process.on('SIGINT', async () => {
+  if (shutdownInitiated) {
+    console.log('\nForce exiting...');
+    process.exit(1);
+  }
+  shutdownInitiated = true;
   console.log('\nGracefully shutting down...');
   io.disconnectSockets(true);
   await db.disconnect();
