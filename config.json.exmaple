@@ -9,7 +9,8 @@
       "token": "your_token",
       "chats": [
         {
-          "id": "1919810"
+          "id": "1919810",
+          "aliases": ["my-chat", "another alias"]
         },
         {
           "id": "123456789",

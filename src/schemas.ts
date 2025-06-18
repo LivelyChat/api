@@ -2,12 +2,15 @@ import { z } from '@hono/zod-openapi';
 
 export const QuerySchema = z
   .object({
-    platform: z.string().openapi({
-      description: 'Filter messages by platform',
-      example: 'qq'
-    }),
-    chatId: z.string().openapi({
-      description: 'Filter messages by chat ID',
+    platform: z
+      .string()
+      .transform((val) => val.toLowerCase())
+      .openapi({
+        description: 'Filter messages by platform',
+        example: 'qq'
+      }),
+    chat: z.string().openapi({
+      description: 'Filter messages by chat ID or alias',
       example: '12345678'
     }),
     secret: z.string().optional().openapi({

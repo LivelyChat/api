@@ -1,5 +1,5 @@
 import { Collection, MongoClient } from 'mongodb';
-import type { Message, MessageList, Query } from './schemas.js';
+import type { Message, MessageList } from './schemas.js';
 import config from '../config.json' with { type: 'json' };
 
 interface DbMessage {
@@ -83,11 +83,15 @@ export class Database {
     return collection.countDocuments();
   }
 
-  async getMessages(query: Query): Promise<MessageList> {
+  async getMessages(
+    platform: string,
+    chatId: string,
+    limit: number,
+    before?: number | undefined
+  ): Promise<MessageList> {
     await this.connect();
     const collection = this.getCollection('messages');
 
-    const { platform, chatId, before, limit } = query;
     const findQuery: Record<string, string | object> = {};
 
     if (platform) findQuery['metadata.platform'] = platform;
@@ -114,6 +118,5 @@ export class Database {
   }
 }
 
-// Export a singleton instance
 const db = new Database();
 export default db;

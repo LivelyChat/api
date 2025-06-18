@@ -30,22 +30,22 @@ app.openapi(NewMessage, async (c) => {
 
 app.openapi(GetMessages, async (c) => {
   const query = c.req.valid('query');
-  const v = validate(query.platform, query.chatId, query.secret);
-  if (v) {
+  const v = validate(query.platform, query.chat, query.secret);
+  if (!v.result) {
     return c.json({ error: v.error }, v.status as ErrorCode);
   }
-  const result = await db.getMessages(query);
+  const result = await db.getMessages(query.platform, v.result.id, query.limit, query.before);
   return c.json(result, 200);
 });
 
 app.openapi(GetQqGroupInfo, async (c) => {
-  const { groupId } = c.req.valid('param');
+  const { chat } = c.req.valid('param');
   const { secret } = c.req.valid('query');
-  const v = validate('qq', groupId, secret);
-  if (v) {
+  const v = validate('qq', chat, secret);
+  if (!v.result) {
     return c.json({ error: v.error }, v.status as ErrorCode);
   }
-  return c.json(await platforms.qq.getGroupInfo(groupId), 200);
+  return c.json(await platforms.qq.getGroupInfo(v.result.id), 200);
 });
 
 app.doc('/openapi', {
@@ -92,13 +92,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('join', (platform, chat, secret) => {
-    const room = `${platform}/${chat}`;
-    const chatConfig = getConfig(platform, chat);
-    if (!chatConfig) socket.emit('error', 'Chat not found');
-    if (chatConfig?.secret && chatConfig.secret !== secret) {
+    const config = getConfig(platform, chat);
+    if (!config) {
+      socket.emit('error', 'Chat not found');
+      return;
+    }
+    if (config?.secret && config.secret !== secret) {
       socket.emit('error', 'Invalid secret');
       return;
     }
+    const room = `${platform}/${config.id}`;
     socket.join(room);
     joinedRooms.add(room);
     console.log(`Socket ${socket.id} joined ${room}.`);

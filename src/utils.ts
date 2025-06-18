@@ -1,7 +1,9 @@
 import config from '../config.json' with { type: 'json' };
 
 export const getConfig = (platform: string, chat: string) =>
-  config.platforms[platform as keyof typeof config.platforms].chats.find((c) => c.id === chat);
+  config.platforms[platform as keyof typeof config.platforms].chats.find(
+    (c) => c.id === chat || c.aliases?.some((a) => a.toLowerCase() === chat.toLowerCase())
+  );
 
 export const validate = (platform: string, chat: string, secret?: string) => {
   const chatConfig = getConfig(platform, chat);
@@ -9,6 +11,7 @@ export const validate = (platform: string, chat: string, secret?: string) => {
   if (chatConfig?.secret && chatConfig.secret !== secret) {
     return { status: 403, error: 'Invalid secret' };
   }
+  return { result: { id: chatConfig.id } };
 };
 
 export const getChatCount = () => {

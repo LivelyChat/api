@@ -62,11 +62,11 @@ export const GetMessages = createRoute({
 
 export const GetQqGroupInfo = createRoute({
   method: 'get',
-  path: '/qq/group/{groupId}',
+  path: '/qq/group/{chat}',
   request: {
     params: z.object({
-      groupId: z.string().openapi({
-        description: 'QQ group ID',
+      chat: z.string().openapi({
+        description: 'Group ID or alias',
         example: '12345678'
       })
     }),
