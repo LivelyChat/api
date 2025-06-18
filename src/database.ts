@@ -30,13 +30,14 @@ export class Database {
     this.uri = config.mongoDbUri;
     this.dbName = config.mongoDbName;
     this.client = new MongoClient(this.uri);
+    this.connect();
   }
 
   async connect(): Promise<void> {
     if (!this.connected) {
       await this.client.connect();
       this.connected = true;
-      console.log('MongoDB connected.');
+      console.log('[MongoDB] Connected.');
     }
   }
 
@@ -44,7 +45,7 @@ export class Database {
     if (this.connected) {
       await this.client.close();
       this.connected = false;
-      console.log('MongoDB disconnected.');
+      console.log('[MongoDB] Disconnected.');
     }
   }
 
