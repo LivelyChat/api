@@ -21,7 +21,7 @@ export default class {
           delay: 5000
         }
       },
-      true
+      false
     );
     this.napcat.on('message', async (context) => {
       const message = {

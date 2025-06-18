@@ -6,24 +6,15 @@ import { GetMessages, GetQqGroupInfo, NewMessage, Overview } from './routes.js';
 import db from './database.js';
 import Platforms from './platforms/index.js';
 import type { Message } from './schemas.js';
-import config from '../config.json' with { type: 'json' };
+import { getChatCount, getConfig, truncate, validate } from './utils.js';
 
 type ErrorCode = 403 | 404;
 
 const receiveMessage = async (message: Message) => {
   await db.saveMessage(message);
-  io.to(`${message.platform}/${message.chatId}`).emit('message', message);
-};
-
-const getConfig = (platform: string, chat: string) =>
-  config.platforms[platform as keyof typeof config.platforms].chats.find((c) => c.id === chat);
-
-const validate = (platform: string, chat: string, secret?: string) => {
-  const chatConfig = getConfig(platform, chat);
-  if (!chatConfig) return { status: 404, error: 'Chat not found' };
-  if (chatConfig?.secret && chatConfig.secret !== secret) {
-    return { status: 403, error: 'Invalid secret' };
-  }
+  const addr = `${message.platform}/${message.chatId}`;
+  io.to(addr).emit('message', message);
+  console.log(`Received message from ${addr}:`, truncate(message.content));
 };
 
 const platforms = new Platforms(receiveMessage);
@@ -57,7 +48,7 @@ app.openapi(GetQqGroupInfo, async (c) => {
   return c.json(await platforms.qq.getGroupInfo(groupId), 200);
 });
 
-app.doc('/docs', {
+app.doc('/openapi', {
   openapi: '1.0.0',
   info: {
     version: '1.0.0',
@@ -66,10 +57,7 @@ app.doc('/docs', {
 });
 
 app.openapi(Overview, async (c) => {
-  let chatCount = 0;
-  Object.keys(config.platforms).forEach((platform) => {
-    chatCount += config.platforms[platform as keyof typeof config.platforms].chats.length;
-  });
+  const chatCount = getChatCount();
   const messageCount = await db.countMessages();
   return c.json({ chatCount, messageCount }, 200);
 });
