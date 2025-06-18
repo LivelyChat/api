@@ -66,9 +66,14 @@ export default class {
       }
     });
 
-    this.napcat.connect().catch((error) => {
-      console.error('Failed to connect to QQ:', error);
-    });
+    this.napcat
+      .connect()
+      .then(() => {
+        console.log('[QQ] Connected.');
+      })
+      .catch((error) => {
+        console.error('[QQ] Failed to connect:', error);
+      });
   }
 
   async getGroupInfo(groupId: string): Promise<Group> {

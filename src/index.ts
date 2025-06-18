@@ -65,10 +65,10 @@ app.openapi(Overview, async (c) => {
 const server = serve(
   {
     fetch: app.fetch,
-    port: 3000
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   },
   (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
+    console.log(`Server is running on http://localhost:${info.port}.`);
   }
 );
 
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
   const joinedRooms = new Set<string>();
 
   socket.on('disconnect', () => {
-    console.log(`Socket ${socket.id} disconnected`);
+    console.log(`Socket ${socket.id} disconnected.`);
     joinedRooms.forEach((room) => {
       const roomSize = io.sockets.adapter.rooms.get(room)?.size || 0;
       io.to(room).emit('left', socket.id, roomSize);
@@ -101,14 +101,16 @@ io.on('connection', (socket) => {
     }
     socket.join(room);
     joinedRooms.add(room);
-    console.log(`Socket ${socket.id} joined room: ${room}`);
+    console.log(`Socket ${socket.id} joined ${room}.`);
     io.to(room).emit('joined', socket.id, io.sockets.adapter.rooms.get(room)?.size || 0);
   });
 });
 
-process.on('SIGINT', () => {
-  console.log('\nSIGINT received. Gracefully shutting down...');
+process.on('SIGINT', async () => {
+  console.log('\nGracefully shutting down...');
   io.disconnectSockets(true);
-  db.disconnect();
+  await db.disconnect();
   server.close();
+  console.log('Process exited.');
+  process.exit(0);
 });

@@ -36,7 +36,7 @@ export class Database {
     if (!this.connected) {
       await this.client.connect();
       this.connected = true;
-      console.log('Connected to database');
+      console.log('MongoDB connected.');
     }
   }
 
@@ -44,7 +44,7 @@ export class Database {
     if (this.connected) {
       await this.client.close();
       this.connected = false;
-      console.log('Disconnected from database');
+      console.log('MongoDB disconnected.');
     }
   }
 
