@@ -6,6 +6,7 @@
       "protocol": "ws",
       "host": "localhost",
       "port": 3001,
+      "token": "your_token",
       "chats": [
         {
           "id": "1919810"

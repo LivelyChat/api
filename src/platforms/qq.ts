@@ -7,12 +7,13 @@ export default class {
   chats = config.platforms.qq.chats;
 
   constructor(callback: (message: Message) => Promise<void>) {
-    const { protocol, host, port } = config.platforms.qq;
+    const { protocol, host, port, token } = config.platforms.qq;
     this.napcat = new NCWebsocket(
       {
         protocol: protocol === 'ws' ? 'ws' : 'wss',
         host,
         port,
+        accessToken: token,
         throwPromise: true,
         reconnection: {
           enable: true,
@@ -65,14 +66,9 @@ export default class {
       }
     });
 
-    this.napcat
-      .connect()
-      .then(() => {
-        console.log('Successfully connected to QQ.');
-      })
-      .catch((error) => {
-        console.error('Failed to connect to QQ:', error);
-      });
+    this.napcat.connect().catch((error) => {
+      console.error('Failed to connect to QQ:', error);
+    });
   }
 
   async getGroupInfo(groupId: string): Promise<Group> {
