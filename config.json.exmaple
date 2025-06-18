@@ -1,5 +1,5 @@
 {
-  "mongoDbUri": "mongodb://localhost27017",
+  "mongoDbUri": "mongodb://localhost:27017",
   "mongoDbName": "lively-chat",
   "platforms": {
     "qq": {
