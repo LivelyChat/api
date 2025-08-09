@@ -1,0 +1,11 @@
+runtime: nodejs
+install: npm install
+build: |
+  if [ -n "$CONFIG" ]; then
+    echo "$CONFIG" | base64 -d > ./config.json
+  fi
+
+  npm run build
+run: |
+  HOST=0.0.0.0 PORT=$LEANCLOUD_APP_PORT BODY_SIZE_LIMIT=Infinity npm run start
+exposeEnvironmentsOnBuild: true
