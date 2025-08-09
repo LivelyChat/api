@@ -32,7 +32,7 @@ You may define chats to monitor through `platforms.qq.chats`. A config item for 
 
 ### Setup
 
-1. In your MongoDB instance, create a database that has a [**time series**](https://www.mongodb.com/docs/manual/core/timeseries-collections/) collection `messages`.
+1. In your MongoDB instance, create a database that has a [**time series**](https://www.mongodb.com/docs/manual/core/timeseries-collections/) collection `messages` with timeField `timestamp` and metaField `metadata`.
 2. In NapCatQQ, create a new WebSocket client.
 3. Clone this repository.
 4. Copy `config.json.example` to `config.json` and make necessary changes.
